@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22D49" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Course" representedClassName="Course" syncable="YES">
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
+        <relationship name="courseToFlashcard" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Flashcard" inverseName="flashcardToCourse" inverseEntity="Flashcard"/>
+    </entity>
+    <entity name="Flashcard" representedClassName="Flashcard" syncable="YES" codeGenerationType="class">
+        <attribute name="definition" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="term" optional="YES" attributeType="String"/>
+        <relationship name="definitionToLanguage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Language"/>
+        <relationship name="flashcardToCourse" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Course" inverseName="courseToFlashcard" inverseEntity="Course"/>
+        <relationship name="termToLanguage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Language"/>
+    </entity>
+    <entity name="Language" representedClassName="Language" syncable="YES" codeGenerationType="class">
+        <attribute name="code" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+    </entity>
+</model>
