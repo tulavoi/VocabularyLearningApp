@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct CourseDetail: View {
     @EnvironmentObject private var courseModel: CourseViewModel
@@ -81,11 +82,11 @@ struct CourseDetail: View {
     @ViewBuilder
     private func flashcardContent(flashcard: Flashcard?) -> some View{
         ZStack {
-            myFlashcard(text: flashcard?.term ?? "...", isTrue: 90, isFalse: 0, isFlipped: isFlipped)
+            myFlashcard(text: flashcard?.term ?? "...", isTrue: 90, isFalse: 0, isFlipped: isFlipped, languageCode: flashcard?.termToLanguage?.code ?? "")
                 .animation(isFlipped ? .linear : .linear.delay(0.30),
                            value: isFlipped)
             
-            myFlashcard(text: flashcard?.definition ??  "...", isTrue: 0, isFalse: -90, isFlipped: isFlipped)
+            myFlashcard(text: flashcard?.definition ??  "...", isTrue: 0, isFalse: -90, isFlipped: isFlipped , languageCode: flashcard?.definitionToLanguage?.code ?? "")
                 .animation(isFlipped ? .linear.delay(0.30) : .linear,
                            value: isFlipped)
         }
@@ -146,6 +147,10 @@ struct myFlashcard: View {
     var isTrue: CGFloat
     var isFalse: CGFloat
     var isFlipped: Bool
+    var languageCode: String
+    
+    // Bộ tổng hợp giọng nói
+    let synthesizer = AVSpeechSynthesizer()
     
     var body: some View {
         ZStack {
@@ -162,6 +167,17 @@ struct myFlashcard: View {
                 HStack {
                     Button(action: {
                         // Action for sound button
+                        let utterance = AVSpeechUtterance(string: text)
+
+                        // Chọn giọng nói dựa trên mã ngôn ngữ
+                        if let voice = AVSpeechSynthesisVoice(language: languageCode) {
+                            utterance.voice = voice
+                        } else {
+                            print("Không tìm thấy giọng nói cho mã ngôn ngữ: \(languageCode). Sử dụng giọng nói mặc định.")
+                        }
+
+                        // Bắt đầu đọc
+                        synthesizer.speak(utterance)
                     }) {
                         Image(systemName: "speaker.wave.2")
                             .font(.title2)
@@ -171,7 +187,7 @@ struct myFlashcard: View {
                     Spacer()
 
                     Button(action: {
-                        // Action for star button
+                        // Action for starred button
                     }) {
                         Image(systemName: "star")
                             .font(.title2)
