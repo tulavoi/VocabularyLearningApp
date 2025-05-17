@@ -14,48 +14,42 @@ struct CourseDetail: View {
     
     @State private var showConfirmDelete: Bool = false
     @State private var isFlipped: Bool = false
+    @State private var flashcardIndex: Int = 0
     
     var body: some View {
+        let flashcards = courseModel.selectedCourse?.flashcards ?? []
+        let currentFlashcard: Flashcard? = flashcardIndex < flashcards.count ? flashcards[flashcardIndex] : nil
+        
         VStack {
-            header()
+            header(totalFlashcard: flashcards.count)
             
             Divider()
             
-            flashcardContent()
+            flashcardContent(flashcard: currentFlashcard)
 
             Spacer()
             
-            buttonControls()
+            buttonControls(flashcards: flashcards)
         }
         .background(Color("AddCourseBackground").ignoresSafeArea())
-        
-// Delete Course Button
-//            Button(action: {
-//                showConfirmDelete = true
-//            }, label: {
-//                Image(systemName: "trash")
-//                    .font(.title3.bold())
-//                    .foregroundStyle(.red)
-//            })
-//        }
-//        .alert(isPresented: $showConfirmDelete) {
-//            Alert(
-//                title: Text("Xác nhận xoá"),
-//                message: Text("Bạn có chắc muốn xoá học phần này không?"),
-//                primaryButton: .destructive(Text("Xoá")) {
-//                    if courseModel.deleteCourse(context: viewContext, course: courseModel.selectedCourse!) {
-//                        dismiss()
-//                    }
-//                },
-//                secondaryButton: .cancel(Text("Huỷ"))
-//            )
-//        }
-        
+        .alert(isPresented: $showConfirmDelete) {
+            Alert(
+                title: Text("Xác nhận xoá"),
+                message: Text("Bạn có chắc muốn xoá học phần này không?"),
+                primaryButton: .destructive(Text("Xoá")) {
+                    // Loi rang buoc voi flashcard khong xoa duoc
+                    if courseModel.deleteCourse(context: viewContext, course: courseModel.selectedCourse!) {
+                        dismiss()
+                    }
+                },
+                secondaryButton: .cancel(Text("Huỷ"))
+            )
+        }
     }
     
     // MARK: Header
     @ViewBuilder
-    private func header() -> some View{
+    private func header(totalFlashcard: Int) -> some View{
         HStack {
             Button(action: {
                 dismiss()
@@ -67,33 +61,33 @@ struct CourseDetail: View {
 
             Spacer()
 
-            Text(courseModel.selectedCourse?.title ?? "Course detail")
+            Text("\(flashcardIndex + 1) / \(totalFlashcard)")
                 .font(.title3.bold())
                 .foregroundColor(Color("SecondaryText"))
 
             Spacer()
-
+            
             Button(action: {
-                // Action for settings button
-            }) {
-                Image(systemName: "gearshape")
+                showConfirmDelete = true
+            }, label: {
+                Image(systemName: "trash.fill")
                     .font(.title2.bold())
-                    .foregroundStyle(Color("SmallTitleColor"))
-            }
+                    .foregroundStyle(Color("BtnTrashColor"))
+            })
         }
         .padding()
     }
     
     // MARK: Flashcard Content
     @ViewBuilder
-    private func flashcardContent() -> some View{
+    private func flashcardContent(flashcard: Flashcard?) -> some View{
         ZStack {
-            myFlashcard(text: "Back", isTrue: 0, isFalse: -90, isFlipped: isFlipped)
-                .animation(isFlipped ? .linear.delay(0.35) : .linear,
+            myFlashcard(text: flashcard?.term ?? "Front", isTrue: 90, isFalse: 0, isFlipped: isFlipped)
+                .animation(isFlipped ? .linear : .linear.delay(0.30),
                            value: isFlipped)
-
-            myFlashcard(text: "Front", isTrue: 90, isFalse: 0, isFlipped: isFlipped)
-                .animation(isFlipped ? .linear : .linear.delay(0.35),
+            
+            myFlashcard(text: flashcard?.definition ??  "Back", isTrue: 0, isFalse: -90, isFlipped: isFlipped)
+                .animation(isFlipped ? .linear.delay(0.30) : .linear,
                            value: isFlipped)
         }
         .onTapGesture {
@@ -103,104 +97,48 @@ struct CourseDetail: View {
         }
     }
     
-    @ViewBuilder
-    private func cardFaceContent() -> some View{
-        VStack{
-            // Nội dung của mặt trước và mặt sau
-            if !isFlipped { // Hiển thị mặt trước khi chưa lật
-                VStack {
-                    HStack {
-                        Button(action: {
-                            // Action for sound button
-                        }) {
-                            Image(systemName: "speaker.wave.2")
-                                .font(.title2)
-                                .foregroundColor(Color("SmallTitleColor"))
-                        }
-
-                        Spacer()
-
-                        Button(action: {
-                            // Action for starred button
-                        }) {
-                            Image(systemName: "star")
-                                .font(.title2)
-                                .foregroundColor(Color("SmallTitleColor"))
-                        }
-                    }
-                    .padding(.horizontal, 40)
-
-                    Spacer()
-
-                    Text("ハンカチ")
-                        .font(.title)
-                        .padding()
-                    
-                    Spacer()
-                }
-                .padding(.vertical, 30)
-                // Đảm bảo nội dung mặt trước chỉ hiển thị khi chưa lật và không bị ảnh hưởng bởi xoay
-                .rotation3DEffect(.degrees(isFlipped ? 180 : 0),
-                                  axis: (x: 0.0, y: 1.0, z: 0.0)
-                )
-            } else { // Hiển thị mặt sau khi đã lật
-                VStack {
-                     HStack {
-                         Spacer()
-
-                         Button(action: {
-                             // Action for starred button
-                         }) {
-                             Image(systemName: "star")
-                                 .font(.title2)
-                                 .foregroundColor(Color("SmallTitleColor"))
-                         }
-                     }
-                     .padding(.horizontal, 40)
-
-                    Spacer()
-
-                    Text("Khăn tay")
-                        .font(.title)
-                        .multilineTextAlignment(.center)
-                        .padding()
-
-                    Spacer()
-                }
-                 .padding(.vertical, 30)
-                 // Đảm bảo nội dung mặt sau hiển thị đúng hướng sau khi lật 180 độ
-                 .rotation3DEffect(
-                     .degrees(isFlipped ? 180 : 0),
-                     axis: (x: 0.0, y: 1.0, z: 0.0)
-                 )
-            }
-        }
-    }
-    
     // MARK: Button Controls
     @ViewBuilder
-    private func buttonControls() -> some View {
-        HStack {
+    private func buttonControls(flashcards: [Flashcard]) -> some View {
+        HStack(spacing: 20) {
             Button(action: {
-                // Action for rewind button
+                if flashcardIndex > 0 {
+                    withAnimation {
+                        flashcardIndex -= 1
+                        isFlipped = false
+                    }
+                }
             }) {
                 Image(systemName: "arrow.left")
                     .font(.title2)
-                    .foregroundColor(Color("SmallTitleColor"))
+                    .foregroundColor(.white)
+                    .frame(width: 80, height: 50)
+                    .background(flashcardIndex == 0 ? Color.gray.opacity(0.5) : Color("SecondaryColor"))
+                    .clipShape(Capsule())
             }
+            .disabled(flashcardIndex == 0)
 
-            Spacer()
-
+           Spacer()
+           
             Button(action: {
-                // Action for play/forward button
+                if flashcardIndex < flashcards.count - 1 {
+                    withAnimation {
+                        flashcardIndex += 1
+                        isFlipped = false
+                    }
+                }
             }) {
                 Image(systemName: "arrow.right")
                     .font(.title2)
-                    .foregroundColor(Color("SmallTitleColor"))
+                    .foregroundColor(.white)
+                    .frame(width: 80, height: 50)
+                    .background(flashcardIndex == flashcards.count - 1 ? Color.gray.opacity(0.5) : Color("SecondaryColor"))
+                    .clipShape(Capsule())
             }
+            .disabled(flashcardIndex == flashcards.count - 1)
         }
-        .padding(.horizontal, 30)
-        .padding(.vertical, 10)
+        .padding(.horizontal, 40)
+        .padding(.bottom, 10)
     }
 }
 
@@ -218,7 +156,8 @@ struct myFlashcard: View {
                         .stroke(Color("BorderColor"), lineWidth: 3)
                 )
                 .foregroundStyle(.white)
-                .padding(30)
+                .padding(.horizontal, 30)
+                .padding(.vertical, 20)
             
             VStack {
                 HStack {
@@ -247,6 +186,7 @@ struct myFlashcard: View {
                 // Nội dung chính của flashcard
                 Text(text)
                     .font(.title)
+                    .padding(.bottom, 100)
 
                 Spacer()
             }
