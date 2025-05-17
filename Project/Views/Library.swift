@@ -176,7 +176,14 @@ struct Library: View {
     private func CoursesView() -> some View{
         ScrollView {
             FilterView()
-            ForEach(courses) { course in
+
+            ForEach(courses.filter{
+                // Nếu filterText rỗng thì không lọc, trả lại tất cả courses
+                filterText.isEmpty ||
+                
+                // Nếu filterText không rỗng, chỉ giữ các Course có title chứa filterText (không phân biệt hoa thường)
+                $0.title?.localizedCaseInsensitiveContains(filterText) == true
+            }){ course in
                 CourseCardView(course: course)
             }
         }

@@ -22,7 +22,8 @@ extension Flashcard {
     @NSManaged public var definitionToLanguage: Language?
     @NSManaged public var flashcardToCourse: Course?
     @NSManaged public var termToLanguage: Language?
-
+    @NSManaged public var createdAt: Date
+    
     public var course: Course{
         let course = flashcardToCourse
         return course

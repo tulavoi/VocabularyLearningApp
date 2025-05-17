@@ -20,7 +20,7 @@ struct CourseDetail: View {
     var body: some View {
         let flashcards = courseModel.selectedCourse?.flashcards ?? []
         let currentFlashcard: Flashcard? = flashcardIndex < flashcards.count ? flashcards[flashcardIndex] : nil
-        
+
         VStack {
             header(totalFlashcard: flashcards.count)
             
@@ -123,25 +123,6 @@ struct CourseDetail: View {
                 if flashcardIndex > 0 {
                     withAnimation {
                         flashcardIndex -= 1
-                        isFlipped = false
-                    }
-                }
-            }) {
-                Image(systemName: "arrow.left")
-                    .font(.title2)
-                    .foregroundColor(.white)
-                    .frame(width: 80, height: 50)
-                    .background(flashcardIndex == 0 ? Color.gray.opacity(0.5) : Color("SecondaryColor"))
-                    .clipShape(Capsule())
-            }
-            .disabled(flashcardIndex == 0)
-
-           Spacer()
-           
-            Button(action: {
-                if flashcardIndex < flashcards.count - 1 {
-                    withAnimation {
-                        flashcardIndex += 1
                         
                         // Lưu lại flashcard cuối cùng đã xem
                         courseModel.saveLastViewedFlashcard(context: viewContext, flashcardId: flashcards[flashcardIndex].id!)
@@ -150,14 +131,47 @@ struct CourseDetail: View {
                     }
                 }
             }) {
+                Image(systemName: "arrow.left")
+                    .font(.title2)
+                    .foregroundColor(flashcardIndex == 0 ? Color.gray.opacity(0.5) : Color("SecondaryColor"))
+                    .frame(width: 80, height: 50)
+                    .background(.white)
+                    .clipShape(Capsule())
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color("BorderColor"), lineWidth: 3)
+                    )
+            }
+            .disabled(flashcardIndex == 0)
+
+           Spacer()
+           
+            Button(action: {
+                withAnimation {
+                    if flashcardIndex < flashcards.count - 1 {
+                        // Nếu chưa phải thẻ cuối, chuyển sang thẻ tiếp theo
+                        flashcardIndex += 1
+                    } else {
+                        // Nếu là thẻ cuối, quay lại thẻ đầu tiên (index = 0)
+                        flashcardIndex = 0
+                    }
+                    // Lưu lại flashcard cuối cùng đã xem
+                    courseModel.saveLastViewedFlashcard(context: viewContext, flashcardId: flashcards[flashcardIndex].id!)
+                    
+                    isFlipped = false
+                }
+            }) {
                 Image(systemName: "arrow.right")
                     .font(.title2)
-                    .foregroundColor(.white)
+                    .foregroundColor(Color("SecondaryColor"))
                     .frame(width: 80, height: 50)
-                    .background(flashcardIndex == flashcards.count - 1 ? Color.gray.opacity(0.5) : Color("SecondaryColor"))
+                    .background(.white)
                     .clipShape(Capsule())
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color("BorderColor"), lineWidth: 3)
+                    )
             }
-            .disabled(flashcardIndex == flashcards.count - 1)
         }
         .padding(.horizontal, 40)
         .padding(.bottom, 10)
@@ -177,7 +191,7 @@ struct myFlashcard: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 20)
-               .overlay(
+                .overlay(
                     RoundedRectangle(cornerRadius: 20)
                         .stroke(Color("BorderColor"), lineWidth: 3)
                 )

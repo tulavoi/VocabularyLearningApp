@@ -23,7 +23,12 @@ extension Course {
 
     public var flashcards: [Flashcard]{
         guard let set = courseToFlashcard else { return [] }
-            return set.sorted { $0.id > $1.id }
+
+        return set.sorted { (card1, card2) in
+            let date1 = card1.createdAt ?? .distantPast // Nếu card1.createdAt là nil, dùng .distantPast
+            let date2 = card2.createdAt ?? .distantPast // Nếu card2.createdAt là nil, dùng .distantPast
+            return date1 < date2 // So sánh hai giá trị Date không optional
+        }
     }
 }
 

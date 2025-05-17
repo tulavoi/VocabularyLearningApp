@@ -8,6 +8,7 @@
         <relationship name="courseToFlashcard" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Flashcard" inverseName="flashcardToCourse" inverseEntity="Flashcard"/>
     </entity>
     <entity name="Flashcard" representedClassName="Flashcard" syncable="YES" codeGenerationType="class">
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="definition" optional="YES" attributeType="String"/>
         <attribute name="id" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="term" optional="YES" attributeType="String"/>
