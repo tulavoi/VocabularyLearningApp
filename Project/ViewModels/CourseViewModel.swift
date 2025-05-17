@@ -35,7 +35,21 @@ class CourseViewModel: ObservableObject {
         addFlashcardViewModel()
     }
     
-    // Tạo mới học phần
+    // MARK: Lưu lại flashcard cuối cùng đã xem
+    func saveLastViewedFlashcard(context: NSManagedObjectContext, flashcardId: UUID) {
+        guard let course = selectedCourse else {
+            print("No selected course")
+            return
+        }
+        course.lastViewedFlashcardId = flashcardId
+        if let _ = try? context.save() {
+            print("Saved last viewed flashcard ID successfully")
+        }else{
+            print("Failed to save last viewed flashcard ID")
+        }
+    }
+    
+    // MARK: Tạo mới học phần
     func addCourse(context: NSManagedObjectContext) -> Bool{
         let newCourse = Course(context: context)
         newCourse.id = UUID()
@@ -52,6 +66,7 @@ class CourseViewModel: ObservableObject {
         return false
     }
     
+    // MARK: Xoá học phần
     func deleteCourse(context: NSManagedObjectContext, course: Course) -> Bool {
         context.delete(course)
         
@@ -61,6 +76,7 @@ class CourseViewModel: ObservableObject {
         return false
     }
     
+    // MARK: Kiểm tra trước khi thêm học phần
     func validateCourseCreation() -> String? {
         if courseTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return "Thêm tiêu đề để hoàn thành học phần"

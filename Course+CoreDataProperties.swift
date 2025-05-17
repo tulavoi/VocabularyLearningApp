@@ -18,6 +18,7 @@ extension Course {
     @NSManaged public var createdAt: Date?
     @NSManaged public var title: String?
     @NSManaged public var id: UUID?
+    @NSManaged public var lastViewedFlashcardId: UUID?
     @NSManaged public var courseToFlashcard: Set<Flashcard>?
 
     public var flashcards: [Flashcard]{

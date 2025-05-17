@@ -13,6 +13,7 @@ class FlashcardViewModel: ObservableObject {
     @Published var term: String = ""
     @Published var definition: String = ""
     
+    // MARK: Thêm flashcard
     func addFlashcard(context: NSManagedObjectContext, course: Course, termLanguage: Language?, definitionLanguage: Language?) {
         guard !term.isEmpty, !definition.isEmpty else { return }
 

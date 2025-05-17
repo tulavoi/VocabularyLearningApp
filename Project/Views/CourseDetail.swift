@@ -27,10 +27,18 @@ struct CourseDetail: View {
             Divider()
             
             flashcardContent(flashcard: currentFlashcard)
-
+            
             Spacer()
             
             buttonControls(flashcards: flashcards)
+        }
+        .onAppear {
+            if let lastID = courseModel.selectedCourse?.lastViewedFlashcardId,
+               let index = flashcards.firstIndex(where: { $0.id == lastID }) {
+                flashcardIndex = index
+            } else {
+                flashcardIndex = 0
+            }
         }
         .background(Color("AddCourseBackground").ignoresSafeArea())
         .alert(isPresented: $showConfirmDelete) {
@@ -82,13 +90,23 @@ struct CourseDetail: View {
     @ViewBuilder
     private func flashcardContent(flashcard: Flashcard?) -> some View{
         ZStack {
-            myFlashcard(text: flashcard?.term ?? "...", isTrue: 90, isFalse: 0, isFlipped: isFlipped, languageCode: flashcard?.termToLanguage?.code ?? "")
-                .animation(isFlipped ? .linear : .linear.delay(0.30),
-                           value: isFlipped)
+            myFlashcard(
+                text: flashcard?.term ?? "...",
+                isTrue: 90,
+                isFalse: 0,
+                isFlipped: isFlipped,
+                languageCode: flashcard?.termToLanguage?.code ?? ""
+            )
+            .animation(isFlipped ? .linear : .linear.delay(0.30), value: isFlipped)
             
-            myFlashcard(text: flashcard?.definition ??  "...", isTrue: 0, isFalse: -90, isFlipped: isFlipped , languageCode: flashcard?.definitionToLanguage?.code ?? "")
-                .animation(isFlipped ? .linear.delay(0.30) : .linear,
-                           value: isFlipped)
+            myFlashcard(
+                text: flashcard?.definition ??  "...",
+                isTrue: 0,
+                isFalse: -90,
+                isFlipped: isFlipped ,
+                languageCode: flashcard?.definitionToLanguage?.code ?? ""
+            )
+            .animation(isFlipped ? .linear.delay(0.30) : .linear, value: isFlipped)
         }
         .onTapGesture {
             withAnimation(.easeIn){
@@ -124,6 +142,10 @@ struct CourseDetail: View {
                 if flashcardIndex < flashcards.count - 1 {
                     withAnimation {
                         flashcardIndex += 1
+                        
+                        // Lưu lại flashcard cuối cùng đã xem
+                        courseModel.saveLastViewedFlashcard(context: viewContext, flashcardId: flashcards[flashcardIndex].id!)
+                        
                         isFlipped = false
                     }
                 }
