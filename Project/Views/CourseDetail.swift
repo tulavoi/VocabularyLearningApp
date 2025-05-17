@@ -37,7 +37,6 @@ struct CourseDetail: View {
                 title: Text("Xác nhận xoá"),
                 message: Text("Bạn có chắc muốn xoá học phần này không?"),
                 primaryButton: .destructive(Text("Xoá")) {
-                    // Loi rang buoc voi flashcard khong xoa duoc
                     if courseModel.deleteCourse(context: viewContext, course: courseModel.selectedCourse!) {
                         dismiss()
                     }
@@ -82,11 +81,11 @@ struct CourseDetail: View {
     @ViewBuilder
     private func flashcardContent(flashcard: Flashcard?) -> some View{
         ZStack {
-            myFlashcard(text: flashcard?.term ?? "Front", isTrue: 90, isFalse: 0, isFlipped: isFlipped)
+            myFlashcard(text: flashcard?.term ?? "...", isTrue: 90, isFalse: 0, isFlipped: isFlipped)
                 .animation(isFlipped ? .linear : .linear.delay(0.30),
                            value: isFlipped)
             
-            myFlashcard(text: flashcard?.definition ??  "Back", isTrue: 0, isFalse: -90, isFlipped: isFlipped)
+            myFlashcard(text: flashcard?.definition ??  "...", isTrue: 0, isFalse: -90, isFlipped: isFlipped)
                 .animation(isFlipped ? .linear.delay(0.30) : .linear,
                            value: isFlipped)
         }

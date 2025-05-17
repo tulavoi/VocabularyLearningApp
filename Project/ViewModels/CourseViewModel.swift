@@ -65,13 +65,25 @@ class CourseViewModel: ObservableObject {
         if courseTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return "Thêm tiêu đề để hoàn thành học phần"
         }
-
+        
         if termLanguage == nil && definitionLanguage == nil {
-             return "Bạn cần chọn ngôn ngữ cho thuật ngữ và định nghĩa"
+            return "Bạn cần chọn ngôn ngữ cho thuật ngữ và định nghĩa"
         } else if termLanguage == nil {
             return "Bạn cần chọn ngôn ngữ cho thuật ngữ"
         } else if definitionLanguage == nil {
             return "Bạn cần chọn ngôn ngữ cho định nghĩa."
+        }
+        
+        // Kiểm tra nếu <= 2 flashcard thì các trường không được rỗng
+        if flashcards.count <= 2 {
+            for flashcard in flashcards {
+                let term = flashcard.term.trimmingCharacters(in: .whitespacesAndNewlines)
+                let definition = flashcard.definition.trimmingCharacters(in: .whitespacesAndNewlines)
+                
+                if term.isEmpty || definition.isEmpty {
+                    return "Bạn phải điền vào hai thuật ngữ và định nghĩa mới lưu được học phần này."
+                }
+            }
         }
 
         return nil

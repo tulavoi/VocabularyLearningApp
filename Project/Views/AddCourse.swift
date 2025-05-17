@@ -76,9 +76,7 @@ struct AddCourse: View {
                 }
                 
                 Spacer()
-                
-//                Text(focusedIndex != nil ? "\(focusedIndex! + 1) / \(courseModel.flashcards.count)" : "Tạo học phần")
-//                    .font(.title2.bold())
+   
                 Text("Tạo học phần")
                     .font(.title2.bold())
                 

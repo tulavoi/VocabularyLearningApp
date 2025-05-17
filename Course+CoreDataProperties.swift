@@ -21,10 +21,8 @@ extension Course {
     @NSManaged public var courseToFlashcard: Set<Flashcard>?
 
     public var flashcards: [Flashcard]{
-        let setOfFlashcard = courseToFlashcard
-        return setOfFlashcard!.sorted{
-            $0.id > $1.id
-        }
+        guard let set = courseToFlashcard else { return [] }
+            return set.sorted { $0.id > $1.id }
     }
 }
 
