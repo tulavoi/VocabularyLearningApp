@@ -12,28 +12,84 @@ struct CourseDetail: View {
     @Environment(\.managedObjectContext) private var viewContext
     @Environment(\.dismiss) private var dismiss
     
-    
     @State private var showConfirmDelete: Bool = false
     
-    
-    
     var body: some View {
-        VStack{
+        VStack {
             header()
             
             Divider()
+            
+            // Flashcard Content
+            ZStack {
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(Color.white)
+                    .shadow(radius: 5)
+                    .padding(.horizontal)
+
+                VStack {
+                    HStack {
+                        Button(action: {
+                            // Action for sound button
+                        }) {
+                            Image(systemName: "speaker.wave.2")
+                                .font(.title2)
+                                .foregroundColor(.gray)
+                        }
+
+                        Spacer()
+
+                        Button(action: {
+                            // Action for starred button
+                        }) {
+                            Image(systemName: "star")
+                                .font(.title2)
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    .padding(.horizontal, 40)
+
+                    Spacer()
+
+                    Text("ハンカチ")
+                        .font(.title)
+                        .padding(.bottom, 50)
+                    
+                    Spacer()
+                }
+                .padding(.vertical, 30)
+            }
+            .padding(.vertical, 15)
+            .padding(.horizontal, 10)
+
+            Spacer()
+
+            // Bottom Controls
+            HStack {
+                Button(action: {
+                    // Action for rewind button
+                }) {
+                    Image(systemName: "arrow.uturn.backward")
+                        .font(.title2)
+                        .foregroundColor(.primary)
+                }
+
+                Spacer()
+
+                Button(action: {
+                    // Action for play/forward button
+                }) {
+                    Image(systemName: "play.fill")
+                        .font(.title2)
+                        .foregroundColor(.primary)
+                }
+            }
+            .padding(.horizontal, 30)
+            .padding(.vertical, 10)
         }
+        .background(Color("AddCourseBackground").ignoresSafeArea())
         
-//        VStack{
-//            Button (action: {
-//                dismiss()
-//            }, label: {
-//                Image(systemName: "arrow.left")
-//                    .font(.title3.bold())
-//                    .foregroundStyle(Color("SmallTitleColor"))
-//            })
-//            Text(courseModel.courseTitle)
-//
+// Delete Course Button
 //            Button(action: {
 //                showConfirmDelete = true
 //            }, label: {
@@ -60,38 +116,32 @@ struct CourseDetail: View {
     // MARK: Header
     @ViewBuilder
     private func header() -> some View{
-        ZStack {
-            Color.white
-                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 4)
-            
-            HStack {
-                Button {
-                    dismiss()
-                } label: {
-                    Image(systemName: "xmark")
-                        .font(.title3.bold())
-                        .foregroundStyle(Color("SmallTitleColor"))
-                }
-                
-                Spacer()
-                
-                Text(courseModel.selectedCourse?.title ?? "Course Detail")
+        HStack {
+            Button(action: {
+                dismiss()
+            }) {
+                Image(systemName: "xmark")
                     .font(.title2.bold())
-                
-                Spacer()
-                
-                Button {
-                    // Display setting
-                } label: {
-                    Image(systemName: "gearshape")
-                        .font(.title3.bold())
-                        .foregroundStyle(Color("SmallTitleColor"))
-                }
+                    .foregroundStyle(Color("SmallTitleColor"))
             }
-            .padding(.horizontal)
-            .padding(.vertical, 20)
+
+            Spacer()
+
+            Text(courseModel.selectedCourse?.title ?? "Course detail")
+                .font(.title3.bold())
+                .foregroundColor(Color("SecondaryText"))
+
+            Spacer()
+
+            Button(action: {
+                // Action for settings button
+            }) {
+                Image(systemName: "gearshape")
+                    .font(.title2.bold())
+                    .foregroundStyle(Color("SmallTitleColor"))
+            }
         }
-        .frame(height: 60)
+        .padding()
     }
 }
 
