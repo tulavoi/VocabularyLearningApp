@@ -21,6 +21,19 @@ class CourseViewModel: ObservableObject {
     @Published var termLanguage: Language? = nil
     @Published var definitionLanguage: Language? = nil
     
+    func resetCourseViewModel(){
+        courseTitle = ""
+        
+        flashcards = []
+        // Tạo sẵn 2 flashcard cho user nhập
+        addFlashcardViewModel()
+        addFlashcardViewModel()
+        
+        termLanguage = nil
+        definitionLanguage = nil
+    }
+
+    
     func addFlashcardViewModel() {
         flashcards.append(FlashcardViewModel())
     }

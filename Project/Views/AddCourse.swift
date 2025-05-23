@@ -45,7 +45,14 @@ struct AddCourse: View {
                 }
                 .frame(maxHeight: UIScreen.main.bounds.height, alignment: .top)
                 .background(Color("AddCourseBackground"))
+                .onTapGesture{
+                    hideKeyboard()
+                }
             }
+            .onTapGesture{
+                hideKeyboard()
+            }
+            
             Spacer()
             addFlashcardFieldsButton()
         }
@@ -57,6 +64,11 @@ struct AddCourse: View {
         .alert(isPresented: $showAlert){
             Alert(title: Text(alertMessage), dismissButton: .default(Text("OK").foregroundColor(Color("BlueColor"))))
         }
+    }
+    
+    // MARK: Hide Keyboard
+    func hideKeyboard(){
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
     
     // MARK: Header
@@ -88,6 +100,7 @@ struct AddCourse: View {
                         showAlert = true
                     } else {
                         if courseModel.addCourse(context: env.managedObjectContext) {
+                            courseModel.resetCourseViewModel()
                             env.dismiss()
                         }
                     }
@@ -113,7 +126,8 @@ struct AddCourse: View {
                     Rectangle()
                         .frame(height: 5)
                         .padding(.top, 35)
-                        .foregroundColor(Color("NavyColor")),
+                        .foregroundColor(Color("NavyColor"))
+                        .allowsHitTesting(false),
                     alignment: .topLeading
                 )
                 .padding(.bottom, 15)
@@ -188,6 +202,9 @@ struct AddCourse: View {
                     .cornerRadius(12)
                     .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 4)
                     .id(index)
+                    .onTapGesture{
+                        hideKeyboard()
+                    }
                 }
             }
         }
